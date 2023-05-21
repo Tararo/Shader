@@ -136,17 +136,17 @@ Shader "TARARO/Filter_Edge"
             }
             CGPROGRAM
 
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.grabPos = ComputeGrabScreenPos(o.vertex);
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float2 grabUv = i.grabPos.xy / i.grabPos.w;
 
                 float4 grabColor = tex2D(_GrabTexture, grabUv);
@@ -161,8 +161,8 @@ Shader "TARARO/Filter_Edge"
                 float4 fragColor = float4(0, 0, 0, 1);
                 fragColor.rgb = _BGColor.rgb * (1 - edge) + grabColor.rgb * edge;
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }

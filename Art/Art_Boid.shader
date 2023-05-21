@@ -1,6 +1,6 @@
 Shader "TARARO/art_boid"
 {
-	Properties
+    Properties
     {
         [Header(Custom Render Texture)]
             [NoScaleOffset]_BoidTex("8x8, rgba SFLOAT, Double Buffered", 2D) = "gray" {}
@@ -10,7 +10,7 @@ Shader "TARARO/art_boid"
             _Position("Position(XYZ), Scale", Vector) = (0,0,6,0.5)
             _ObjectScale ("Object Scale", Float) = 0.2
             _Depth("Depth", Range(0, 1)) = 0.5
-	}
+    }
 
     CGINCLUDE
     #pragma vertex vert
@@ -50,40 +50,40 @@ Shader "TARARO/art_boid"
         fixed4 color : SV_Target;
     };
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
         }
-		LOD 100
-		Pass
-		{
+        LOD 100
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.vertex = v.vertex;//メッシュのローカル座標
-				o.uv = v.uv;
-				return o;
-			}
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;//メッシュのローカル座標
+                o.uv = v.uv;
+                return o;
+            }
 
-			pout frag(v2f i)
-			{
+            pout frag(v2f i)
+            {
                 //出力色
-				float4 fragColor = _BGColor;
+                float4 fragColor = _BGColor;
                 //--ローカル座標での処理--
                 //視点位置
-				float3 eye = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
+                float3 eye = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
                 //視点→メッシュ
-				float3 vdir = normalize(i.vertex.xyz - eye);
+                float3 vdir = normalize(i.vertex.xyz - eye);
                 //視点→メッシュのz=0座標
                 float3 vpos = eye - vdir / vdir.z * eye.z;
 
@@ -111,12 +111,12 @@ Shader "TARARO/art_boid"
                     fragColor.rgb = fragColor.rgb * (1 - boidColor.a) + boidColor.rgb * boidColor.a;
                 }
 
-				pout o;
-				o.color = fragColor;
+                pout o;
+                o.color = fragColor;
 
-				return o;
-			}
-			ENDCG
-		}
-	}
+                return o;
+            }
+            ENDCG
+        }
+    }
 }

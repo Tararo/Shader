@@ -1,6 +1,6 @@
 Shader "TARARO/cube_glass-cube"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _Color("Color", Color) = (0,0,0,0.15)
@@ -13,7 +13,7 @@ Shader "TARARO/cube_glass-cube"
         [Header(Floating Object)]
             _Scale ("Scale", Range(0, 1)) = 1
             _RotateSpeed ("Rotation Speed", Float) = 0.05
-	}
+    }
 
     CGINCLUDE
     #pragma vertex vert
@@ -176,51 +176,51 @@ Shader "TARARO/cube_glass-cube"
         float depth : SV_Depth;
     };
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "Queue" = "Transparent"
             "RenderType" = "Transparent"
             "VRCFallback"="Hidden"
         }
-		LOD 100
+        LOD 100
 
         GrabPass {}
 
-		Cull Front
-		Pass
-		{
+        Cull Front
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.vertex = v.vertex;//メッシュのローカル座標
-				o.uv = v.uv;
-				return o;
-			}
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;//メッシュのローカル座標
+                o.uv = v.uv;
+                return o;
+            }
 
-			pout frag(v2f i)
-			{
+            pout frag(v2f i)
+            {
                 //---レイマーチング1回目（屈折）---
                 //レイのスタート位置（カメラのローカル座標）.
-				float3 ro = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
+                float3 ro = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
                 //レイの方向（視点→メッシュ）.
-				float3 rd = normalize(i.vertex.xyz - ro);
+                float3 rd = normalize(i.vertex.xyz - ro);
                 //レイの先端座標
-				float3 p;
+                float3 p;
                 //レイが衝突していないと判断すれば描画しない
-				if (rayMarching(ro, rd, p) == false)
+                if (rayMarching(ro, rd, p) == false)
                 {
-					discard;
-				}
+                    discard;
+                }
                 //法線
                 float3 normal = getnormal(p);
 
@@ -271,19 +271,19 @@ Shader "TARARO/cube_glass-cube"
                 float3 refractColor = tex2D(_GrabTexture, refractScreenUv);
 
                 //出力色
-				float4 fragColor = float4(0,0,0,1);
+                float4 fragColor = float4(0,0,0,1);
                 fragColor.rgb = lerp(refractColor, _Color.rgb * difColor, _Color.a);
                 fragColor.rgb = lerp(fragColor.rgb, reflectColor.rgb, fresnel * _Reflect);
                 fragColor.rgb += speColor * fresnel * _Specular;
                 fragColor.rgb += ambColor * _Ambient;
 
-				pout o;
-				float4 projectionPos = UnityObjectToClipPos(float4(p, 1.0));
-				o.depth = projectionPos.z / projectionPos.w;
-				o.color = fragColor;
-				return o;
-			}
-			ENDCG
-		}
-	}
+                pout o;
+                float4 projectionPos = UnityObjectToClipPos(float4(p, 1.0));
+                o.depth = projectionPos.z / projectionPos.w;
+                o.color = fragColor;
+                return o;
+            }
+            ENDCG
+        }
+    }
 }

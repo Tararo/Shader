@@ -93,17 +93,17 @@ Shader "TARARO/Filter_DepthToWorld"
             }
             CGPROGRAM
 
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
                 o.scrPos = ComputeScreenPos(o.vertex);
                 o.uv = v.uv;
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float sampleDepth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.scrPos));
                 float depth = LinearEyeDepth(sampleDepth);
                 float4 depthScrPos = float4(i.scrPos.x, i.scrPos.y, sampleDepth * i.scrPos.w, i.scrPos.w);
@@ -125,8 +125,8 @@ Shader "TARARO/Filter_DepthToWorld"
                 fragColor.rgb = ((_Color.rgb * _Color.a * colorDiff) + (1 * intensityDiff)) / dark;
                 fragColor.a = dark;
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }

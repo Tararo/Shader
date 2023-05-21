@@ -63,31 +63,31 @@ Shader "TARARO/Filter_Screentone"
             }
             CGPROGRAM
 
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.grabPos = ComputeGrabScreenPos(o.vertex);
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float2 size = float2(_Size * 0.01, _Size * 0.01);
                 size.y *= _ScreenParams.x / _ScreenParams.y;
 
                 float2 grabUv = i.grabPos.xy / i.grabPos.w;
                 float2 grabUvC = (floor(grabUv / size) + 0.5) * size;
-				fixed4 grabColor = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUvC));
+                fixed4 grabColor = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUvC));
                 float gray = rgbToGray(grabColor);
 
                 grabUv.y *= _ScreenParams.y / _ScreenParams.x;
                 grabUvC.y *= _ScreenParams.y / _ScreenParams.x;
                 fixed4 fragColor = _Color * circle(grabUv, grabUvC, size.x / 2 * sqrt(2) * gray);
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }

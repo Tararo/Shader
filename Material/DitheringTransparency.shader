@@ -1,6 +1,6 @@
 Shader "TARARO/DitheringTransparency"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _Color("Color", Color) = (0,0,0,1)
@@ -12,7 +12,7 @@ Shader "TARARO/DitheringTransparency"
             _Size ("Size", Range(0.0, 1.0)) = 0.25
             _NearClip ("Near Clip", Float) = 0.2
             _FarClip ("Far Clip", Float) = 3
-	}
+    }
 
     CGINCLUDE
     #pragma target 3.0
@@ -107,22 +107,22 @@ Shader "TARARO/DitheringTransparency"
     };
 
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
         }
-		LOD 100
-		Pass
-		{
+        LOD 100
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
             Cull Off
-			CGPROGRAM
+            CGPROGRAM
 
             v2f vert (appdata v)
             {
@@ -184,7 +184,7 @@ Shader "TARARO/DitheringTransparency"
 
                 return fragColor;
             }
-			ENDCG
-		}
-	}
+            ENDCG
+        }
+    }
 }

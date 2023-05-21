@@ -1,6 +1,6 @@
 Shader "TARARO/raymarch_menger-sponge"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _Color("Color", Color) = (0,0,0,1)
@@ -8,7 +8,7 @@ Shader "TARARO/raymarch_menger-sponge"
             _Specular("Specular", Range(0.0, 1.0)) = 1
             _SpecularPow("Specular Power", Range(2.0, 100.0)) = 50
             _Reflect("Reflection", Range(0.0, 1.0)) = 0.5
-	}
+    }
 
     CGINCLUDE
     #pragma vertex vert
@@ -100,69 +100,69 @@ Shader "TARARO/raymarch_menger-sponge"
         float depth : SV_Depth;
     };
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
             "VRCFallback"="Hidden"
         }
-		LOD 100
-		Cull Front
-		Pass
-		{
+        LOD 100
+        Cull Front
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.vertex = v.vertex;//メッシュのローカル座標
-				o.uv = v.uv;
-				return o;
-			}
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;//メッシュのローカル座標
+                o.uv = v.uv;
+                return o;
+            }
 
-			pout frag(v2f i)
-			{
+            pout frag(v2f i)
+            {
                 //レイのスタート位置（カメラのローカル座標）.
-				float3 ro = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
+                float3 ro = mul(unity_WorldToObject,float4(_WorldSpaceCameraPos,1)).xyz;
                 //レイの方向（視点→メッシュ）.
-				float3 rd = normalize(i.vertex.xyz - ro);
+                float3 rd = normalize(i.vertex.xyz - ro);
                 //レイの歩幅
-				float d = 0;
+                float d = 0;
                 //レイの長さ
-				float t = 0;
+                float t = 0;
                 //レイの先端座標
-				float3 p = float3(0, 0, 0);
+                float3 p = float3(0, 0, 0);
 
                 //レイマーチング
-				[unroll]
-				for (int i = 0; i < 60; ++i)
+                [unroll]
+                for (int i = 0; i < 60; ++i)
                 { 
-					p = ro + rd * t;
-					d = dist(p);
-					t += d;
+                    p = ro + rd * t;
+                    d = dist(p);
+                    t += d;
                     //レイが遠くに行き過ぎたか衝突した場合ループを終える
-					if (d < 0.001 || t > 1000)
+                    if (d < 0.001 || t > 1000)
                     {
                         break;
                     }
-				}
-				p = ro + rd * t;
+                }
+                p = ro + rd * t;
 
                 //レイが衝突していないと判断すれば描画しない
-				if (d > 0.01)
+                if (d > 0.01)
                 {
-					discard;
-				}
-				
+                    discard;
+                }
+                
                 //出力色
-				float4 fragColor = float4(0,0,0,1);
+                float4 fragColor = float4(0,0,0,1);
                 //法線
                 float3 normal = getnormal(p);
                 //光源
@@ -190,13 +190,13 @@ Shader "TARARO/raymarch_menger-sponge"
                 //fragColor.rgb = lerp(_Color.rgb * (difColor + speColor * _Specular) + ambColor * _Ambient, refColor.rgb, _Reflect);
                 fragColor.rgb = lerp(_Color.rgb, refColor.rgb, _Reflect) * (difColor + speColor * _Specular) + ambColor * _Ambient;
 
-				pout o;
-				o.color = fragColor;
-				float4 projectionPos = UnityObjectToClipPos(float4(p, 1.0));
-				o.depth = projectionPos.z / projectionPos.w;
-				return o;
-			}
-			ENDCG
-		}
-	}
+                pout o;
+                o.color = fragColor;
+                float4 projectionPos = UnityObjectToClipPos(float4(p, 1.0));
+                o.depth = projectionPos.z / projectionPos.w;
+                return o;
+            }
+            ENDCG
+        }
+    }
 }

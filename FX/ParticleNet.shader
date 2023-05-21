@@ -1,19 +1,19 @@
 Shader "TARARO/ParticleNet"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _AreaSize("Area Size", float) = 0.5
-		    _Color("Color", Color) = (1,1,1,1)
+            _Color("Color", Color) = (1,1,1,1)
             _Intensity("Color Intensity", Range(0, 4)) = 0
-		[Header(Particle)]
-		    _Size ("Size", Float) = 0.02
+        [Header(Particle)]
+            _Size ("Size", Float) = 0.02
             _FluctSpeed ("Fluctuation Speed", Float) = 0.2
             _FluctAmount ("Fluctuation Amount", Float) = 0.2
-		[Header(Line)]
-		    _LineLength("Max Length", Range(0, 2)) = 0.8
-		    _LineWidth("Width", Range(0, 1)) = 0.5
-	}
+        [Header(Line)]
+            _LineLength("Max Length", Range(0, 2)) = 0.8
+            _LineWidth("Width", Range(0, 1)) = 0.5
+    }
 
     SubShader
     {
@@ -24,9 +24,9 @@ Shader "TARARO/ParticleNet"
             "VRCFallback"="Hidden"
         }
         LOD 100
-		Blend SrcAlpha OneMinusSrcAlpha
-		ZWrite Off
-		Cull Off
+        Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
+        Cull Off
 
         Pass
         {
@@ -157,20 +157,20 @@ Shader "TARARO/ParticleNet"
 
             fixed4 frag (g2f i) : SV_Target
             {
-				float4 col = _Color;
+                float4 col = _Color;
                 col.a *= i.alpha;
-				if(i.type == 0)
+                if(i.type == 0)
                 {
-					col.a *= saturate(.5-length(i.uv)) * clamp(1 / pow(length(i.uv), 2), 0, 2);
-					return col;
-				}
+                    col.a *= saturate(.5-length(i.uv)) * clamp(1 / pow(length(i.uv), 2), 0, 2);
+                    return col;
+                }
                 else
                 {
                     col.a *= smoothstep(-1, -0.9, i.uv.x) * (1- smoothstep(0.9, 1, i.uv.x));
-					col.a *= saturate(.5-abs(i.uv.y)) * clamp(1 / pow(abs(i.uv.y), 2), 0, 2);
-					return col;
+                    col.a *= saturate(.5-abs(i.uv.y)) * clamp(1 / pow(abs(i.uv.y), 2), 0, 2);
+                    return col;
                 }
-				return col;
+                return col;
             }
             ENDCG
         }

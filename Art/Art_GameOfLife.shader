@@ -1,6 +1,6 @@
 Shader "TARARO/Art_GameOfLife"
 {
-	Properties
+    Properties
     {
         [Header(Custom Render Texture)]
             [NoScaleOffset]_BoidTex("8x8, rgba SFLOAT, Double Buffered", 2D) = "gray" {}
@@ -8,7 +8,7 @@ Shader "TARARO/Art_GameOfLife"
             _CellColor("Cell Color", Color) = (0,1,0,0.2)
             _BGColor("BackGround Color", Color) = (0,0,0,0)
             _Tiling ("Tiling", Float) = 1.0
-	}
+    }
 
     CGINCLUDE
     #pragma vertex vert
@@ -39,9 +39,9 @@ Shader "TARARO/Art_GameOfLife"
         fixed4 color : SV_Target;
     };
     ENDCG
-	
-	SubShader
-	{
+    
+    SubShader
+    {
         Tags
         {
             "Queue" = "Transparent"
@@ -55,19 +55,19 @@ Shader "TARARO/Art_GameOfLife"
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.vertex = v.vertex;//メッシュのローカル座標
-				o.uv = v.uv;
-				return o;
-			}
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;//メッシュのローカル座標
+                o.uv = v.uv;
+                return o;
+            }
 
-			pout frag(v2f i)
-			{
+            pout frag(v2f i)
+            {
                 //UV tiling
                 float2 uv = frac(i.uv * _Tiling);
                 uv = (floor(uv / _BoidTex_TexelSize) + 0.5) * _BoidTex_TexelSize;
@@ -76,11 +76,11 @@ Shader "TARARO/Art_GameOfLife"
                 //出力色
                 float4 fragColor = _CellColor * isLive + _BGColor * (1 - isLive);
 
-				pout o;
-				o.color = fragColor;
-				return o;
-			}
-			ENDCG
-		}
-	}
+                pout o;
+                o.color = fragColor;
+                return o;
+            }
+            ENDCG
+        }
+    }
 }

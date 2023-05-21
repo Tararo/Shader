@@ -1,6 +1,6 @@
 Shader "TARARO/TriplanarMapping"
 {
-	Properties
+    Properties
     {
         [Header(Texture)]
             _MainTex ("Texture", 2D) = "white" {}
@@ -11,7 +11,7 @@ Shader "TARARO/TriplanarMapping"
             _Specular("Specular", Range(0.0, 1.0)) = 0.5
             _SpecularPow("Specular Power", Range(1.0, 100.0)) = 2
             _Reflect("Reflection", Range(0.0, 1.0)) = 0.5
-	}
+    }
 
     CGINCLUDE
     #pragma target 3.0
@@ -81,21 +81,21 @@ Shader "TARARO/TriplanarMapping"
     float _Reflect;
 
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
         }
-		LOD 100
-		Pass
-		{
+        LOD 100
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
             v2f vert (appdata v)
             {
@@ -154,9 +154,9 @@ Shader "TARARO/TriplanarMapping"
 
                 return fragColor;
             }
-			ENDCG
-		}
+            ENDCG
+        }
 
         UsePass "Standard/ShadowCaster"
-	}
+    }
 }

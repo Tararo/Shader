@@ -111,18 +111,18 @@ Shader "TARARO/Glass_CullOff"
             CGPROGRAM
 
             // Vertex Shader
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.normal  = UnityObjectToWorldNormal(v.normal);
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-				return o;
-			}
-			
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.normal  = UnityObjectToWorldNormal(v.normal);
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                return o;
+            }
+            
             // Fragment Shader
-			fixed4 frag (v2f i) : SV_Target
-			{
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float3 cameraPos = _WorldSpaceCameraPos;
                 #if defined(USING_STEREO_MATRICES)
                 cameraPos = (unity_StereoWorldSpaceCameraPos[0] + unity_StereoWorldSpaceCameraPos[1]) * 0.5;
@@ -161,11 +161,11 @@ Shader "TARARO/Glass_CullOff"
                 refractColor.b = tex2D(_GrabTexture, refractScreenUv).b;
 
                 // 出力色
-				float4 fragColor = float4(0, 0, 0, 1);
+                float4 fragColor = float4(0, 0, 0, 1);
                 fragColor.rgb = lerp(refractColor, _Color.rgb, _Color.a);
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
 
@@ -181,18 +181,18 @@ Shader "TARARO/Glass_CullOff"
             CGPROGRAM
 
             // Vertex Shader
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.normal  = UnityObjectToWorldNormal(v.normal);
-				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-				return o;
-			}
-			
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.normal  = UnityObjectToWorldNormal(v.normal);
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                return o;
+            }
+            
             // Fragment Shader
-			fixed4 frag (v2f i) : SV_Target
-			{
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float3 cameraPos = _WorldSpaceCameraPos;
                 #if defined(USING_STEREO_MATRICES)
                 cameraPos = (unity_StereoWorldSpaceCameraPos[0] + unity_StereoWorldSpaceCameraPos[1]) * 0.5;
@@ -249,13 +249,13 @@ Shader "TARARO/Glass_CullOff"
                 refractColor.b = tex2D(_GrabTexture, refractScreenUv).b;
 
                 // 出力色
-				float4 fragColor = float4(0, 0, 0, 1);
+                float4 fragColor = float4(0, 0, 0, 1);
                 fragColor.rgb = lerp(refractColor, _Color.rgb, _Color.a);
                 fragColor.rgb = lerp(fragColor.rgb, reflectColor.rgb, fresnel * _Reflect);
                 fragColor.rgb += speColor * fresnel * _Specular;
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }

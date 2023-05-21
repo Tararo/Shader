@@ -1,6 +1,6 @@
 Shader "TARARO/Art_Network"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _ObjectColor("Object color", Color) = (0,0,0,1)
@@ -12,7 +12,7 @@ Shader "TARARO/Art_Network"
             _Length("Line fade length", Float) = 1
             _FluctSpeed("Fluctuation speed", Float) = 0.5
             _FluctAmount("Fluctuation amount", Range(0, 1)) = 0.5
-	}
+    }
 
     CGINCLUDE
     #pragma vertex vert
@@ -135,35 +135,35 @@ Shader "TARARO/Art_Network"
         fixed4 color : SV_Target;
     };
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
         }
-		LOD 100
-		Pass
-		{
+        LOD 100
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
-			v2f vert(appdata v)
-			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.vertex = v.vertex;//メッシュのローカル座標
-				o.uv = v.uv;
-				return o;
-			}
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;//メッシュのローカル座標
+                o.uv = v.uv;
+                return o;
+            }
 
-			pout frag(v2f i)
-			{
+            pout frag(v2f i)
+            {
                 //出力色
-				float4 fragColor = _BGColor;
+                float4 fragColor = _BGColor;
                 
                 float2 nuv = i.uv * _Scale;
                 nuv.x += _Time.y * 0.2;
@@ -171,12 +171,12 @@ Shader "TARARO/Art_Network"
 
                 fragColor = _ObjectColor * particle + fragColor * (1 - particle);
 
-				pout o;
-				o.color = fragColor;
+                pout o;
+                o.color = fragColor;
 
-				return o;
-			}
-			ENDCG
-		}
-	}
+                return o;
+            }
+            ENDCG
+        }
+    }
 }

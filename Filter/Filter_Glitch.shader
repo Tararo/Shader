@@ -153,17 +153,17 @@ Shader "TARARO/Filter_Glitch"
             }
             CGPROGRAM
 
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.grabPos = ComputeGrabScreenPos(o.vertex);
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.uv = v.uv;
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float4 fragColor = float4(0, 0, 0, 1);
                 float2 grabUv = i.grabPos.xy / i.grabPos.w;
                 //Distortion
@@ -179,8 +179,8 @@ Shader "TARARO/Filter_Glitch"
                 //Saturation
                 fragColor.rgb *= float3(_SatuR, _SatuG, _SatuB);
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }

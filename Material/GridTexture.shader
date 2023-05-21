@@ -1,6 +1,6 @@
 Shader "TARARO/GridTexture"
 {
-	Properties
+    Properties
     {
         [Header(Main)]
             _BGColor("Background Color", Color) = (0,0,0,1)
@@ -18,7 +18,7 @@ Shader "TARARO/GridTexture"
             _DotSize ("Dot Size", Range(0.0, 1.0)) = 0.1
             _DotSpeed ("Dot Speed", Float) = (0.3, 0, 0.15)
             _DotDensity ("Dot Density", Range(0.0, 1.0)) = 0.5
-	}
+    }
 
     CGINCLUDE
     #pragma target 3.0
@@ -105,21 +105,21 @@ Shader "TARARO/GridTexture"
     };
 
     ENDCG
-	
-	SubShader
-	{
-		Tags
+    
+    SubShader
+    {
+        Tags
         {
             "RenderType" = "Opaque"
         }
-		LOD 100
-		Pass
-		{
+        LOD 100
+        Pass
+        {
             Tags
             {
                 "LightMode" = "ForwardBase"
             }
-			CGPROGRAM
+            CGPROGRAM
 
             v2f vert (appdata v)
             {
@@ -189,9 +189,9 @@ Shader "TARARO/GridTexture"
 
                 return fragColor;
             }
-			ENDCG
-		}
+            ENDCG
+        }
 
         UsePass "Standard/ShadowCaster"
-	}
+    }
 }

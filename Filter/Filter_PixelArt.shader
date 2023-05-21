@@ -58,23 +58,23 @@ Shader "TARARO/Filter_PixelArt"
             }
             CGPROGRAM
 
-			v2f vert (appdata v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.grabPos = ComputeGrabScreenPos(o.vertex);
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.grabPos = ComputeGrabScreenPos(o.vertex);
                 o.scrPos = ComputeScreenPos(o.vertex);
                 o.uv = v.uv;
-				return o;
-			}
-			
-			fixed4 frag (v2f i) : SV_Target
-			{
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
                 float2 size = float2(_Size * 0.01, _Size * 0.01);
                 size.y *= _ScreenParams.x / _ScreenParams.y;
                 float2 grabUv = i.grabPos.xy / i.grabPos.w;
                 grabUv = (floor(grabUv / size) + 0.5) * size;
-				fixed4 grabColorCenter = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUv));
+                fixed4 grabColorCenter = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUv));
                 fixed4 grabColor00 = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUv + float2(-0.5, -0.5) * size));
                 fixed4 grabColor01 = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUv + float2(-0.5, 0.5) * size));
                 fixed4 grabColor10 = tex2D(_GrabTexture, UNITY_PROJ_COORD(grabUv + float2(0.5, -0.5) * size));
@@ -83,8 +83,8 @@ Shader "TARARO/Filter_PixelArt"
 
                 fixed4 fragColor = rgbTo6bit(grabColor, _ColorBit);
 
-				return fragColor;
-			}
+                return fragColor;
+            }
             ENDCG
         }
     }
