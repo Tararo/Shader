@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-﻿Shader "TARARO/Cube_DistortionSphere"
+Shader "TARARO/Cube_DistortionSphere"
 {
 	Properties
     {
