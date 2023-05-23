@@ -92,6 +92,14 @@ ___
 - Cube_GlassCube
     - ガラス風の半透明な立方体
     - メッシュはCubeを想定
+- Cube_MengerSponge
+    - メンガーのスポンジ
+    - 模様を平行移動
+    - メッシュはCubeを想定
+- Cube_MengerSponge_2
+    - メンガーのスポンジ
+    - 模様を拡大、縮小
+    - メッシュはCubeを想定
 - Quad_FlowSphere
     - 床、天井、球体
     - メッシュはQuadを想定
