@@ -1,4 +1,4 @@
-Shader "TARARO/quad_grid-wave"
+Shader "TARARO/Quad_GridWave"
 {
     Properties
     {

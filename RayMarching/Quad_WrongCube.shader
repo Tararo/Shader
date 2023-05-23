@@ -1,4 +1,4 @@
-Shader "TARARO/quad_wrong-cube"
+Shader "TARARO/Quad_WrongCube"
 {
     Properties
     {

@@ -1,4 +1,4 @@
-Shader "TARARO/quad_menger-sponge"
+Shader "TARARO/Quad_MengerSponge"
 {
     Properties
     {

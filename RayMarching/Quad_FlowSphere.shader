@@ -1,4 +1,4 @@
-Shader "TARARO/quad_flow-sphere"
+Shader "TARARO/Quad_FlowSphere"
 {
     Properties
     {

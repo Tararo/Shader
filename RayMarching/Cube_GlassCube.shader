@@ -1,4 +1,4 @@
-Shader "TARARO/cube_glass-cube"
+Shader "TARARO/Cube_GlassCube"
 {
     Properties
     {

@@ -1,4 +1,4 @@
-Shader "TARARO/raymarch_menger-sponge_2"
+Shader "TARARO/Cube_MengerSponge_2"
 {
     Properties
     {
