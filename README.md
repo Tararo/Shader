@@ -92,3 +92,19 @@ ___
 - Cube_GlassCube
     - ガラス風の半透明な立方体
     - メッシュはCubeを想定
+- Quad_FlowSphere
+    - 床、天井、球体
+    - メッシュはQuadを想定
+- Quad_GridWave
+    - 立方体を敷き詰めている
+    - メッシュはQuadを想定
+- Quad_Hole
+    - 四角の穴
+    - TriplanarMappingの要領でテクスチャを展開
+    - メッシュはQuadを想定
+- Quad_MengerSponge
+    - メンガーのスポンジ
+    - メッシュはQuadを想定
+- Quad_WrongCube
+    - 視線ベクトルが反転したレイマーチング
+    - メッシュはQuadを想定
