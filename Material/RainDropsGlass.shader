@@ -12,7 +12,7 @@ Shader "TARARO/RainDropsGlass"
         _Size("Size", Float) = 4
         _Speed("Speed", Float) = 0.5
         _Blur("Blur", Range(0.0, 1.0)) = 0.4
-        _BumpScale  ("Normal Scale", Range(0, 1)) = 0.1
+        _BumpScale  ("Normal Scale", Range(-1, 1)) = 0.1
     }
 
     CGINCLUDE
@@ -191,7 +191,7 @@ Shader "TARARO/RainDropsGlass"
     // ハイトマップから法線マップ
     float3 normalMap(float2 uv) {
         float delta = 0.001;
-        float3 dx = float3(1, 0, heightMap(uv + float2(delta, 0)) - heightMap(uv - float2(delta, 0)));
+        float3 dx = float3(1, 0, heightMap(uv - float2(delta, 0)) - heightMap(uv + float2(delta, 0)));
         float3 dy = float3(0, 1, heightMap(uv + float2(0, delta)) - heightMap(uv - float2(0, delta)));
         float3 normal = normalize(cross(dx, dy)) * 0.5 + 0.5;
         return normal;
