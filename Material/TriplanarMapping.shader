@@ -59,16 +59,13 @@ Shader "TARARO/TriplanarMapping"
     {
         float4 vertex : POSITION;
         half3 normal : NORMAL;
-        half4 tangent : TANGENT;
     };
 
     struct v2f
     {
         float4 pos : SV_POSITION;
-        half3 normal : TEXCOORD0; //法線
-        half3 tangent : TEXCOORD1; //接線
-        half3 binormal : TEXCOORD2; //従法線
-        float4 worldPos : TEXCOORD3;
+        half3 normal : TEXCOORD0;
+        float4 worldPos : TEXCOORD1;
     };
 
     sampler2D _MainTex;
@@ -102,9 +99,6 @@ Shader "TARARO/TriplanarMapping"
                 v2f o;
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.normal = UnityObjectToWorldNormal(v.normal);
-                o.tangent = normalize(mul(unity_ObjectToWorld, v.tangent)).xyz;
-                o.binormal = cross(v.normal, v.tangent) * v.tangent.w;
-                o.binormal = normalize(mul(unity_ObjectToWorld, o.binormal));
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 return o;
             }
