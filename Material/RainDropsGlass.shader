@@ -5,7 +5,7 @@ Shader "TARARO/RainDropsGlass"
         _Albedo("Albedo",Color) = (1, 1, 1, 0.1)
         _Ambient("Ambient Light", Range(0.0, 1.0)) = 0.1
         _Specular("Specular", Range(0.0, 1.0)) = 1
-        _SpecularPow("Specular Power", Range(2.0, 100.0)) = 50
+        _SpecularPow("Specular Power", Range(2.0, 100.0)) = 100
         _Reflect("Reflection", Range(0.0, 1.0)) = 0.3
         _Refract("Refraction", Range(0.0, 1.0)) = 0.3
         _RefractIndex("Refraction Index", Float) = 1.5
@@ -117,10 +117,36 @@ Shader "TARARO/RainDropsGlass"
 
         float dropX = sin(3*w)*pow(sin(w),6)*(.4-abs(rnd))*.2 + rnd*.8;
         float dropY = (sin(t) - .5*sin(2*t) + .333*sin(3*t) - .25*sin(4*t) + .2*sin(5*t))/4;
-        float dropSize = .04*abs(rnd) + .02;
+        float dropSize = .02*abs(rnd) + .02;
         float drop = dropShape(dropSize, float2(dropX,dropY)/aspect, gv/aspect);
 
         return drop;
+    }
+
+    // 流れる水滴（軌跡付き）
+    float flowDropsTrail(float2 uv) {
+        float t = _Time.y * _Speed;
+
+        float2 aspect = float2(2, 1);
+        float2 gv = uv * _Size * aspect;
+        gv.y += t*.5;
+        float2 id = floor(gv);
+        gv = frac(gv) - .5;
+        float w = uv.y*10 + t*.2;
+
+        float rnd = random2(id);
+        t += rnd*UNITY_TWO_PI;
+
+        float dropX = sin(3*w)*pow(sin(w),6)*(.4-abs(rnd))*.2 + rnd*.8;
+        float dropY = (sin(t) - .5*sin(2*t) + .333*sin(3*t) - .25*sin(4*t) + .2*sin(5*t))/4;
+        float dropSize = .02*abs(rnd) + .02;
+
+        float drop = dropShape(dropSize, float2(dropX,dropY)/aspect, gv/aspect);
+        float trail = smoothstep(dropSize, dropSize*.5, abs(gv.x-dropX)/aspect.x);
+        trail *= smoothstep(-.0, .05, (gv.y-dropY)/aspect.y);
+        trail *= smoothstep(.5, dropY, gv.y*1.5);
+
+        return min(drop + trail, 1);
     }
 
     // 点滅する水滴
@@ -142,56 +168,37 @@ Shader "TARARO/RainDropsGlass"
         return drop*fade;
     }
 
-    // 流れる水滴（軌跡付き）
-    float flowDropsTrail(float2 uv) {
-        float t = _Time.y * _Speed;
-
-        float2 aspect = float2(2, 1);
-        float2 gv = uv * _Size * aspect;
-        gv.y += t*.5;
-        float2 id = floor(gv);
-        gv = frac(gv) - .5;
-        float w = uv.y*10 + t*.2;
-
-        float rnd = random2(id);
-        t += rnd*UNITY_TWO_PI;
-
-        float dropX = sin(3*w)*pow(sin(w),6)*(.4-abs(rnd))*.2 + rnd*.8;
-        float dropY = (sin(t) - .5*sin(2*t) + .333*sin(3*t) - .25*sin(4*t) + .2*sin(5*t))/4;
-        float dropSize = .04*abs(rnd) + .02;
-
-        float drop = dropShape(dropSize, float2(dropX,dropY)/aspect, gv/aspect);
-        float trail = smoothstep(dropSize, dropSize*.5, abs(gv.x-dropX)/aspect.x);
-        trail *= smoothstep(-.0, .05, (gv.y-dropY)/aspect.y);
-        trail *= smoothstep(.5, dropY, gv.y*1.5);
-
-        return min(drop + trail, 1);
-    }
-
     // ブラーマップ
     float blurMap(float2 uv) {
         float drops = flowDropsTrail(uv);
-        drops = smoothMax(drops, flowDropsTrail(uv*1.23 + 1.53), 4);
-        drops = smoothMax(drops, flowDropsTrail(uv*1.43 + 3.27), 4);
-        drops = smoothMax(drops, flowDropsTrail(uv*1.55 + 5.73), 4);
-        drops = smoothMax(drops, staticDrops(uv), 2);
+        drops = smoothMax(drops, flowDropsTrail(uv*1.23 + 1.53), 1);
+        drops = smoothMax(drops, flowDropsTrail(uv*1.43 + 3.27), 1);
+        drops = smoothMax(drops, flowDropsTrail(uv*1.55 + 5.73), 1);
+        drops = smoothMax(drops, staticDrops(uv)*.25, 0.5);
         return drops;
     }
 
     // ハイトマップ
     float heightMap(float2 uv) {
+        float tdrops = flowDropsTrail(uv);
+        tdrops = smoothMax(tdrops, flowDropsTrail(uv*1.23 + 1.53), 1);
+        tdrops = smoothMax(tdrops, flowDropsTrail(uv*1.43 + 3.27), 1);
+        tdrops = smoothMax(tdrops, flowDropsTrail(uv*1.55 + 5.73), 1);
+
         float drops = flowDrops(uv);
-        drops = smoothMax(drops, flowDrops(uv*1.23 + 1.53), 4);
-        drops = smoothMax(drops, flowDrops(uv*1.43 + 3.27), 4);
-        drops = smoothMax(drops, flowDrops(uv*1.55 + 5.73), 4);
-        drops = smoothMax(drops, staticDrops(uv), 2);
+        drops = smoothMax(drops, flowDrops(uv*1.23 + 1.53), 1);
+        drops = smoothMax(drops, flowDrops(uv*1.43 + 3.27), 1);
+        drops = smoothMax(drops, flowDrops(uv*1.55 + 5.73), 1);
+
+        float sdrops = staticDrops(uv)*.25 * (1 - tdrops);
+        drops = smoothMax(drops, sdrops, 0.5);
         return drops;
     }
 
     // ハイトマップから法線マップ
     float3 normalMap(float2 uv) {
         float delta = 0.001;
-        float3 dx = float3(1, 0, heightMap(uv - float2(delta, 0)) - heightMap(uv + float2(delta, 0)));
+        float3 dx = float3(1, 0, heightMap(uv + float2(delta, 0)) - heightMap(uv - float2(delta, 0)));
         float3 dy = float3(0, 1, heightMap(uv + float2(0, delta)) - heightMap(uv - float2(0, delta)));
         float3 normal = normalize(cross(dx, dy)) * 0.5 + 0.5;
         return normal;
@@ -258,12 +265,16 @@ Shader "TARARO/RainDropsGlass"
             fixed4 frag (v2f i) : SV_Target
             {
                 // 法線
-                float3 weights = abs(i.normal.xyz);
-                weights /= weights.x + weights.y + weights.z;
-                float3 normalmap = normalMap(i.worldPos.zy) * weights.x + normalMap(i.worldPos.xy) * weights.z;
-                half4 bump = half4(normalmap, 1);
-                normalmap = UnpackScaleNormal(bump, _BumpScale);
-                float3 normal = normalize((i.tangent * normalmap.x) + (i.binormal * normalmap.y) + (i.normal * normalmap.z));
+                float3 weights = pow(i.normal.xyz, 4);
+                weights /= dot(weights, float3(1,1,1));
+                float3 normalmapX = normalMap(i.worldPos.zy);
+                float3 normalmapZ = normalMap(i.worldPos.xy);
+                normalmapX = UnpackScaleNormal(float4(normalmapX, 1), _BumpScale) * float3(1, 1, 1);
+                normalmapZ = UnpackScaleNormal(float4(normalmapZ, 1), _BumpScale) * float3(-1, 1, 1);
+                float3 normalX = normalize((i.tangent * normalmapX.x) + (i.binormal * normalmapX.y) + (i.normal * normalmapX.z));
+                float3 normalY = i.normal;
+                float3 normalZ = normalize((i.tangent * normalmapZ.x) + (i.binormal * normalmapZ.y) + (i.normal * normalmapZ.z));
+                float3 normal = normalize(normalX * weights.x + normalY * weights.y + normalZ * weights.z);
 
                 // 視線の向き
                 float3 cameraPos = _WorldSpaceCameraPos;
@@ -296,7 +307,7 @@ Shader "TARARO/RainDropsGlass"
                 // GrabTexture
                 float heightmap = heightMap(i.worldPos.zy) * weights.x + heightMap(i.worldPos.xy) * weights.z;
                 float blurmap = blurMap(i.worldPos.zy) * weights.x + blurMap(i.worldPos.xy) * weights.z;
-                float blur = _Blur * .01 * (1 - smoothstep(0, .1, blurmap));
+                float blur = _Blur * .01 * (1 - blurmap);
                 float2 grabUv = i.grabPos.xy / i.grabPos.w;
                 grabUv = lerp(grabUv, refractUv, heightmap);
                 float4 grabColor = float4(0, 0, 0, 1);

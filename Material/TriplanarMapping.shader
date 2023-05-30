@@ -5,7 +5,7 @@ Shader "TARARO/TriplanarMapping"
         [Header(Texture)]
             _MainTex ("Texture", 2D) = "white" {}
             [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
-            _BumpScale  ("Normal Scale", Range(0, 1)) = 1.0
+            _BumpScale ("Normal Scale", Range(0, 1)) = 1.0
         [Header(Main)]
             _Ambient("Ambient Light", Range(0.0, 1.0)) = 0.1
             _Specular("Specular", Range(0.0, 1.0)) = 0.5
@@ -112,19 +112,24 @@ Shader "TARARO/TriplanarMapping"
             fixed4 frag (v2f i) : SV_Target
             {
                 // uv算出
-                float2 uv_xy = TRANSFORM_TEX(i.worldPos.xy, _MainTex);
                 float2 uv_yz = TRANSFORM_TEX(i.worldPos.yz, _MainTex);
                 float2 uv_zx = TRANSFORM_TEX(i.worldPos.zx, _MainTex);
+                float2 uv_xy = TRANSFORM_TEX(i.worldPos.xy, _MainTex);
                 // 重み算出
-                float3 weights = abs(i.normal);
-                weights /= weights.x + weights.y + weights.z;
+                float3 weights = pow(i.normal.xyz, 4);
+                weights /= dot(weights, float3(1,1,1));
                 // テクスチャ
-                fixed4 triTexture = tex2D(_MainTex, uv_xy) * weights.z +  tex2D(_MainTex, uv_yz) * weights.x +  tex2D(_MainTex, uv_zx) * weights.y;
-                fixed4 triBump = tex2D(_BumpMap, uv_xy) * weights.z +  tex2D(_BumpMap, uv_yz) * weights.x +  tex2D(_BumpMap, uv_zx) * weights.y;
+                fixed4 triTexture = tex2D(_MainTex, uv_yz) * weights.x + tex2D(_MainTex, uv_zx) * weights.y + tex2D(_MainTex, uv_xy) * weights.z;
 
-                // 法線
-                half3 normalmap = UnpackScaleNormal(triBump, _BumpScale);
-                float3 normal = normalize((i.tangent * normalmap.x) + (i.binormal * normalmap.y) + (i.normal * normalmap.z));
+                // 法線（UDN blend）
+                float3 normalmapX = UnpackScaleNormal(tex2D(_BumpMap, uv_yz), _BumpScale);
+                float3 normalmapY = UnpackScaleNormal(tex2D(_BumpMap, uv_zx), _BumpScale);
+                float3 normalmapZ = UnpackScaleNormal(tex2D(_BumpMap, uv_xy), _BumpScale);
+                float3 normalX = normalize(float3(normalmapX.xy + i.normal.yz, i.normal.x));
+                float3 normalY = normalize(float3(normalmapY.xy + i.normal.zx, i.normal.y));
+                float3 normalZ = normalize(float3(normalmapZ.xy + i.normal.xy, i.normal.z));
+                float3 normal = normalize(normalX.zxy * weights.x + normalY.yzx * weights.y + normalZ.xyz * weights.z);
+
                 // 視線の向き
                 float3 cameraPos = _WorldSpaceCameraPos;
                 #if defined(USING_STEREO_MATRICES)
